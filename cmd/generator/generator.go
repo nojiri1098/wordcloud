@@ -9,7 +9,7 @@ import (
 
 func main() {
 	// 用途に応じて特定の品詞を除外できる
-	stopPOSList := wordcounter.StopPOSList([]wordcounter.POS{
+	excludePOSList := wordcounter.ExcludePOSList([]wordcounter.POS{
 		{"助詞"},
 		{"助動詞"},
 		{"記号"},
@@ -49,7 +49,7 @@ func main() {
 	userDict := wordcounter.UserDict("user_dict.txt")
 
 	counter, err := wordcounter.New(
-		stopPOSList,
+		excludePOSList,
 		stopWords,
 		keepPOSList,
 		userDict,
