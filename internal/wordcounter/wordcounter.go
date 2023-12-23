@@ -50,6 +50,7 @@ func (wc *WordCounter) Count(r io.Reader) (map[string]int, error) {
 	// filter tokens
 	filter.NewPOSFilter(wc.options.stopPOSList...).Drop(&tokens)
 	filter.NewWordFilter(wc.options.stopWords).Drop(&tokens)
+	filter.NewPOSFilter(wc.options.keepPOSList...).Keep(&tokens)
 
 	// count words
 	result := make(map[string]int)

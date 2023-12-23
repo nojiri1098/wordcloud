@@ -39,7 +39,13 @@ func main() {
 		"できる",
 	)
 
-	counter, err := wordcounter.New(stopPOSList, stopWords)
+	// 特定の品詞だけを抽出できる
+	keepPOSList := wordcounter.KeepPOSList([]wordcounter.POS{
+		{"名詞"},
+		{"カスタム名詞"},
+	}...)
+
+	counter, err := wordcounter.New(stopPOSList, stopWords, keepPOSList)
 	if err != nil {
 		panic(err)
 	}
