@@ -16,7 +16,10 @@ type WordCounter struct {
 }
 
 func New(options ...Option) (*WordCounter, error) {
-	t, err := tokenizer.New(ipa.Dict())
+	t, err := tokenizer.New(
+		ipa.Dict(),
+		tokenizer.OmitBosEos(),
+	)
 	if err != nil {
 		return nil, err
 	}
