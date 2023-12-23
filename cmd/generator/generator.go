@@ -1,10 +1,22 @@
 package main
 
-import "github.com/nojiri1098/wordcloud/internal/wordcloud"
+import (
+	"strings"
+
+	"github.com/nojiri1098/wordcloud/internal/wordcloud"
+	"github.com/nojiri1098/wordcloud/internal/wordcounter"
+)
 
 func main() {
-	wordList := map[string]int{
-		"word": 1,
+	counter, err := wordcounter.New()
+	if err != nil {
+		panic(err)
+	}
+
+	r := strings.NewReader("word")
+	wordList, err := counter.Count(r)
+	if err != nil {
+		panic(err)
 	}
 
 	saveAs := "wordcloud"
