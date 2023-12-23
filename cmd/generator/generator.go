@@ -45,7 +45,15 @@ func main() {
 		{"カスタム名詞"},
 	}...)
 
-	counter, err := wordcounter.New(stopPOSList, stopWords, keepPOSList)
+	// カスタム名詞を追加できる
+	userDict := wordcounter.UserDict("user_dict.txt")
+
+	counter, err := wordcounter.New(
+		stopPOSList,
+		stopWords,
+		keepPOSList,
+		userDict,
+	)
 	if err != nil {
 		panic(err)
 	}

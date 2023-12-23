@@ -5,6 +5,7 @@ import (
 	"io"
 	"strings"
 
+	"github.com/ikawaha/kagome-dict/dict"
 	"github.com/ikawaha/kagome-dict/ipa"
 	"github.com/ikawaha/kagome/v2/filter"
 	"github.com/ikawaha/kagome/v2/tokenizer"
@@ -16,22 +17,30 @@ type WordCounter struct {
 }
 
 func New(options ...Option) (*WordCounter, error) {
-	t, err := tokenizer.New(
-		ipa.Dict(),
+	counterOptions := &Options{}
+	for _, option := range options {
+		option(counterOptions)
+	}
+
+	tokenizerOptions := []tokenizer.Option{
 		tokenizer.OmitBosEos(),
-	)
+	}
+	if counterOptions.userDictPath != "" {
+		userDict, err := dict.NewUserDict(counterOptions.userDictPath)
+		if err != nil {
+			return nil, err
+		}
+		tokenizerOptions = append(tokenizerOptions, tokenizer.UserDict(userDict))
+	}
+
+	t, err := tokenizer.New(ipa.Dict(), tokenizerOptions...)
 	if err != nil {
 		return nil, err
 	}
 
-	opts := &Options{}
-	for _, option := range options {
-		option(opts)
-	}
-
 	return &WordCounter{
 		tokenizer: t,
-		options:   opts,
+		options:   counterOptions,
 	}, nil
 }
 
