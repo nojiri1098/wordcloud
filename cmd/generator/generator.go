@@ -1,20 +1,44 @@
 package main
 
 import (
-	"strings"
+	"os"
 
 	"github.com/nojiri1098/wordcloud/internal/wordcloud"
 	"github.com/nojiri1098/wordcloud/internal/wordcounter"
 )
 
 func main() {
-	counter, err := wordcounter.New()
+	// 用途に応じて特定の品詞を除外できる
+	stopPOSList := wordcounter.StopPOSList([]wordcounter.POS{
+		{"助詞"},
+		{"助動詞"},
+		{"記号"},
+		{"連体詞"},
+		{"副詞", "助詞類接続"},
+		{"動詞", "非自立"},
+		{"動詞", "接尾"},
+		{"名詞", "代名詞"},
+		{"名詞", "非自立"},
+		{"名詞", "接尾"},
+		{"名詞", "数"},
+		{"名詞", "サ変接続"},
+		{"フィラー"},
+	}...)
+
+	counter, err := wordcounter.New(stopPOSList)
 	if err != nil {
 		panic(err)
 	}
 
-	r := strings.NewReader("word")
-	wordList, err := counter.Count(r)
+	// 解析する対象を指定する
+	// io.Reader であればなんでも良い
+	f, err := os.Open("20231221.txt")
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	wordList, err := counter.Count(f)
 	if err != nil {
 		panic(err)
 	}

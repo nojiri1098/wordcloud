@@ -6,21 +6,29 @@ import (
 	"strings"
 
 	"github.com/ikawaha/kagome-dict/ipa"
+	"github.com/ikawaha/kagome/v2/filter"
 	"github.com/ikawaha/kagome/v2/tokenizer"
 )
 
 type WordCounter struct {
 	tokenizer *tokenizer.Tokenizer
+	options   *Options
 }
 
-func New() (*WordCounter, error) {
+func New(options ...Option) (*WordCounter, error) {
 	t, err := tokenizer.New(ipa.Dict())
 	if err != nil {
 		return nil, err
 	}
 
+	opts := &Options{}
+	for _, option := range options {
+		option(opts)
+	}
+
 	return &WordCounter{
 		tokenizer: t,
+		options:   opts,
 	}, nil
 }
 
@@ -38,6 +46,9 @@ func (wc *WordCounter) Count(r io.Reader) (map[string]int, error) {
 	// tokenize
 	text := strings.Join(lines, " ")
 	tokens := wc.tokenizer.Tokenize(text)
+
+	// filter tokens
+	filter.NewPOSFilter(wc.options.stopPOSList...).Drop(&tokens)
 
 	// count words
 	result := make(map[string]int)
