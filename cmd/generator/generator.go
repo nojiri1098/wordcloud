@@ -25,7 +25,21 @@ func main() {
 		{"フィラー"},
 	}...)
 
-	counter, err := wordcounter.New(stopPOSList)
+	// ノイズになる単語を除外できる
+	stopWords := wordcounter.StopWords(
+		"ある",
+		"ない",
+		"いい",
+		"よく",
+		"どう",
+		"あっ",
+		"し",
+		"する",
+		"なる",
+		"できる",
+	)
+
+	counter, err := wordcounter.New(stopPOSList, stopWords)
 	if err != nil {
 		panic(err)
 	}
