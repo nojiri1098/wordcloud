@@ -11,7 +11,8 @@ import (
 
 // TODO: 設定ファイルから読み込めるようにする
 type Config struct {
-	Threshold int `yaml:"threshold"`
+	StopWords []string `yaml:"stop-words"`
+	Threshold int      `yaml:"threshold"`
 }
 
 func loadConfig(path string) (Config, error) {
@@ -58,18 +59,7 @@ func main() {
 	}...)
 
 	// ノイズになる単語を除外できる
-	stopWords := wordcounter.StopWords(
-		"ある",
-		"ない",
-		"いい",
-		"よく",
-		"どう",
-		"あっ",
-		"し",
-		"する",
-		"なる",
-		"できる",
-	)
+	stopWords := wordcounter.StopWords(config.StopWords...)
 
 	// 特定の品詞だけを抽出できる
 	keepPOSList := wordcounter.KeepPOSList([]wordcounter.POS{
