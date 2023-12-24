@@ -80,5 +80,12 @@ func (wc *WordCounter) Count(r io.Reader) (map[string]int, error) {
 		result[b]++
 	}
 
+	// apply threshould
+	for word, count := range result {
+		if count < wc.options.threshold {
+			delete(result, word)
+		}
+	}
+
 	return result, nil
 }

@@ -48,11 +48,15 @@ func main() {
 	// カスタム名詞を追加できる
 	userDict := wordcounter.UserDict("user_dict.txt")
 
+	// 最低出現回数を指定できる
+	threshold := wordcounter.Threshold(3)
+
 	counter, err := wordcounter.New(
 		excludePOSList,
 		stopWords,
 		keepPOSList,
 		userDict,
+		threshold,
 	)
 	if err != nil {
 		panic(err)
@@ -65,6 +69,8 @@ func main() {
 		panic(err)
 	}
 	defer f.Close()
+
+	// TODO: テキストのクレンジング
 
 	wordList, err := counter.Count(f)
 	if err != nil {
