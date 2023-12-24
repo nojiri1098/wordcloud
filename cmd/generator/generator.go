@@ -11,7 +11,8 @@ import (
 
 // TODO: 設定ファイルから読み込めるようにする
 type Config struct {
-	ExcludePOSList []wordcounter.POS `yaml:"exclude-pos-list,flow"`
+	ExcludePOSList []wordcounter.POS `yaml:"exclude-pos-list"`
+	KeepPOSList    []wordcounter.POS `yaml:"keep-pos-list"`
 	StopWords      []string          `yaml:"stop-words"`
 	Threshold      int               `yaml:"threshold"`
 }
@@ -42,17 +43,14 @@ func main() {
 		panic(err)
 	}
 
-	// 用途に応じて特定の品詞を除外できる
+	// 特定の品詞を除外できる
 	excludePOSList := wordcounter.ExcludePOSList(config.ExcludePOSList...)
 
-	// ノイズになる単語を除外できる
-	stopWords := wordcounter.StopWords(config.StopWords...)
-
 	// 特定の品詞だけを抽出できる
-	keepPOSList := wordcounter.KeepPOSList([]wordcounter.POS{
-		{"名詞"},
-		{"カスタム名詞"},
-	}...)
+	keepPOSList := wordcounter.KeepPOSList(config.KeepPOSList...)
+
+	// 特定の単語を除外できる
+	stopWords := wordcounter.StopWords(config.StopWords...)
 
 	// カスタム名詞を追加できる
 	userDict := wordcounter.UserDict("user_dict.txt")

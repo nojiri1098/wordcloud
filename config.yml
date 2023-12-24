@@ -14,6 +14,10 @@ exclude-pos-list:
   - ["名詞", "サ変接続"]
   - ["フィラー"]
 
+keep-pos-list:
+  - ["名詞"]
+  - ["カスタム名詞"]
+
 stop-words:
   - "ある"
   - "ない"
