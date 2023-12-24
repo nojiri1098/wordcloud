@@ -25,11 +25,17 @@ func New(options ...Option) (*WordCounter, error) {
 	tokenizerOptions := []tokenizer.Option{
 		tokenizer.OmitBosEos(),
 	}
-	if counterOptions.userDictPath != "" {
-		userDict, err := dict.NewUserDict(counterOptions.userDictPath)
+	if len(counterOptions.userDict) > 0 {
+		s := strings.NewReader(strings.Join(counterOptions.userDict, "\n"))
+		r, err := dict.NewUserDicRecords(s)
 		if err != nil {
 			return nil, err
 		}
+		userDict, err := r.NewUserDict()
+		if err != nil {
+			return nil, err
+		}
+
 		tokenizerOptions = append(tokenizerOptions, tokenizer.UserDict(userDict))
 	}
 

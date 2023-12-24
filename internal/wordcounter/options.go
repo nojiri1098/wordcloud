@@ -6,7 +6,7 @@ type Options struct {
 	excludePOSList []filter.POS
 	stopWords      []string
 	keepPOSList    []filter.POS
-	userDictPath   string
+	userDict       []string
 	threshold      int
 }
 
@@ -34,9 +34,9 @@ func KeepPOSList(posList ...POS) Option {
 	}
 }
 
-func UserDict(path string) Option {
+func UserDict(userDict []string) Option {
 	return func(options *Options) {
-		options.userDictPath = path
+		options.userDict = userDict
 	}
 }
 

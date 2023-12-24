@@ -15,6 +15,7 @@ type Config struct {
 	KeepPOSList    []wordcounter.POS `yaml:"keep-pos-list"`
 	StopWords      []string          `yaml:"stop-words"`
 	Threshold      int               `yaml:"threshold"`
+	UserDict       []string          `yaml:"user-dict"`
 }
 
 func loadConfig(path string) (Config, error) {
@@ -53,7 +54,7 @@ func main() {
 	stopWords := wordcounter.StopWords(config.StopWords...)
 
 	// カスタム名詞を追加できる
-	userDict := wordcounter.UserDict("user_dict.txt")
+	userDict := wordcounter.UserDict(config.UserDict)
 
 	// 最低出現回数を指定できる
 	threshold := wordcounter.Threshold(config.Threshold)
