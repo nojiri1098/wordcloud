@@ -22,6 +22,27 @@ func New(options ...Option) (*WordCounter, error) {
 		option(counterOptions)
 	}
 
+	if path := counterOptions.ConfigPath; path != "" {
+		config, err := LoadConfig(path)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, pos := range config.ExcludePOSList {
+			counterOptions.excludePOSList = append(counterOptions.excludePOSList, pos.ToFilter())
+		}
+
+		for _, pos := range config.KeepPOSList {
+			counterOptions.keepPOSList = append(counterOptions.keepPOSList, pos.ToFilter())
+		}
+
+		counterOptions.stopWords = config.StopWords
+
+		counterOptions.threshold = config.Threshold
+
+		counterOptions.userDict = config.UserDict
+	}
+
 	tokenizerOptions := []tokenizer.Option{
 		tokenizer.OmitBosEos(),
 	}
