@@ -4,6 +4,7 @@ import (
 	"image/color"
 	"image/png"
 	"os"
+	"strings"
 
 	"github.com/psykhi/wordclouds"
 )
@@ -36,13 +37,15 @@ func New(wordList map[string]int) WordCloud {
 				}
 				return
 			}()),
-			wordclouds.FontFile("../../internal/wordcloud/font/BIZUDPGothic-Regular.ttf"), // FIXME
+			wordclouds.FontFile("internal/wordcloud/font/BIZUDPGothic-Regular.ttf"),
 		),
 	}
 }
 
-func (wc WordCloud) SaveAsPNG(pathWithoutExt string) error {
-	path := pathWithoutExt + ".png"
+func (wc WordCloud) SaveAsPNG(path string) error {
+	if !strings.HasSuffix(path, ".png") {
+		path = path + ".png"
+	}
 
 	f, err := os.Create(path)
 	if err != nil {

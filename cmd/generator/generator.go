@@ -1,23 +1,39 @@
 package main
 
 import (
+	"flag"
 	"os"
 
 	"github.com/nojiri1098/wordcloud/internal/wordcloud"
 	"github.com/nojiri1098/wordcloud/internal/wordcounter"
 )
 
+var flags = struct {
+	config *string
+	input  *string
+	output *string
+}{}
+
+func init() {
+	flags.config = flag.String("config", "config.yml", "config file path")
+	flags.input = flag.String("input", "cmd/generator/20231221.txt", "input file path")
+	flags.output = flag.String("output", "wordcloud.png", "output file path")
+}
+
 func main() {
-	counter, err := wordcounter.New(
-		wordcounter.ConfigPath("../../config.yml"),
-	)
+	flag.Parse()
+
+	var opt func(*wordcounter.Options)
+	if flags.config != nil {
+		opt = wordcounter.ConfigPath(*flags.config)
+	}
+
+	counter, err := wordcounter.New(opt)
 	if err != nil {
 		panic(err)
 	}
 
-	// 解析する対象を指定する
-	// io.Reader であればなんでも良い
-	f, err := os.Open("20231221.txt")
+	f, err := os.Open(*flags.input)
 	if err != nil {
 		panic(err)
 	}
@@ -30,9 +46,7 @@ func main() {
 		panic(err)
 	}
 
-	saveAs := "wordcloud"
-
-	if err := wordcloud.New(wordList).SaveAsPNG(saveAs); err != nil {
+	if err := wordcloud.New(wordList).SaveAsPNG(*flags.output); err != nil {
 		panic(err)
 	}
 }
