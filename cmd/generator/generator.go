@@ -1,13 +1,45 @@
 package main
 
 import (
+	"io"
 	"os"
 
 	"github.com/nojiri1098/wordcloud/internal/wordcloud"
 	"github.com/nojiri1098/wordcloud/internal/wordcounter"
+	"gopkg.in/yaml.v2"
 )
 
+// TODO: 設定ファイルから読み込めるようにする
+type Config struct {
+	Threshold int `yaml:"threshold"`
+}
+
+func loadConfig(path string) (Config, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return Config{}, err
+	}
+	defer f.Close()
+
+	configFile, err := io.ReadAll(f)
+	if err != nil {
+		return Config{}, err
+	}
+
+	var config Config
+	if err := yaml.Unmarshal(configFile, &config); err != nil {
+		return Config{}, err
+	}
+
+	return config, nil
+}
+
 func main() {
+	config, err := loadConfig("../../config.yml")
+	if err != nil {
+		panic(err)
+	}
+
 	// 用途に応じて特定の品詞を除外できる
 	excludePOSList := wordcounter.ExcludePOSList([]wordcounter.POS{
 		{"助詞"},
@@ -49,7 +81,7 @@ func main() {
 	userDict := wordcounter.UserDict("user_dict.txt")
 
 	// 最低出現回数を指定できる
-	threshold := wordcounter.Threshold(3)
+	threshold := wordcounter.Threshold(config.Threshold)
 
 	counter, err := wordcounter.New(
 		excludePOSList,
