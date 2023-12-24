@@ -11,8 +11,9 @@ import (
 
 // TODO: 設定ファイルから読み込めるようにする
 type Config struct {
-	StopWords []string `yaml:"stop-words"`
-	Threshold int      `yaml:"threshold"`
+	ExcludePOSList []wordcounter.POS `yaml:"exclude-pos-list,flow"`
+	StopWords      []string          `yaml:"stop-words"`
+	Threshold      int               `yaml:"threshold"`
 }
 
 func loadConfig(path string) (Config, error) {
@@ -42,21 +43,7 @@ func main() {
 	}
 
 	// 用途に応じて特定の品詞を除外できる
-	excludePOSList := wordcounter.ExcludePOSList([]wordcounter.POS{
-		{"助詞"},
-		{"助動詞"},
-		{"記号"},
-		{"連体詞"},
-		{"副詞", "助詞類接続"},
-		{"動詞", "非自立"},
-		{"動詞", "接尾"},
-		{"名詞", "代名詞"},
-		{"名詞", "非自立"},
-		{"名詞", "接尾"},
-		{"名詞", "数"},
-		{"名詞", "サ変接続"},
-		{"フィラー"},
-	}...)
+	excludePOSList := wordcounter.ExcludePOSList(config.ExcludePOSList...)
 
 	// ノイズになる単語を除外できる
 	stopWords := wordcounter.StopWords(config.StopWords...)
